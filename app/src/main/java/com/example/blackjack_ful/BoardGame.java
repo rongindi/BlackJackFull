@@ -10,11 +10,12 @@ import androidx.annotation.NonNull;
 
 public class BoardGame extends View {
 
-    Bitmap bitmap, bitmapStand,bitmapHit,bitmapDouble,bitmapSplit;
+    Bitmap bitmap, bitmapStand,bitmapHit,bitmapDouble,bitmapSplit, bitmapReturn;
     private Context context;
     StandButton standButton;
     HitButton hitButton;
     DoubleButton doubleButton;
+    ReturnButton returnButton;
     SplitButton splitButton;
 
     private Bitmap background;
@@ -35,6 +36,7 @@ public class BoardGame extends View {
         bitmapSplit = BitmapFactory.decodeResource(getResources(),R.drawable.splitbutton);
         bitmapSplit = Bitmap.createScaledBitmap(bitmapSplit,600,400,true);
         splitButton = new SplitButton(425,1900,bitmapSplit);
+        bitmapReturn = BitmapFactory.decodeResource(getResources(),R.drawable.)
     }
 
 
