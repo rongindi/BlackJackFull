@@ -17,11 +17,13 @@ public class BoardGame extends View {
     DoubleButton doubleButton;
     ReturnButton returnButton;
     SplitButton splitButton;
+    private Deck deck;
 
     private Bitmap background;
     public BoardGame(Context context) {
         super(context);
         this.context = context;
+        deck = new Deck(context);
 
         bitmap =      BitmapFactory.decodeResource(context.getResources(),R.drawable.background);
         bitmapStand = BitmapFactory.decodeResource(context.getResources(),R.drawable.standbutton);
@@ -36,7 +38,11 @@ public class BoardGame extends View {
         bitmapSplit = BitmapFactory.decodeResource(getResources(),R.drawable.splitbutton);
         bitmapSplit = Bitmap.createScaledBitmap(bitmapSplit,600,400,true);
         splitButton = new SplitButton(425,1900,bitmapSplit);
-        bitmapReturn = BitmapFactory.decodeResource(getResources(),R.drawable.)
+        bitmapReturn = BitmapFactory.decodeResource(getResources(),R.drawable.returnbutton);
+        bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn,400,400,true);
+        returnButton = new ReturnButton(500,100,bitmapReturn);
+        deck.createDeck();
+        deck.shuffle();
     }
 
 

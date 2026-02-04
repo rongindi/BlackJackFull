@@ -13,11 +13,10 @@ public class Card {
         private int val;
         private String shap;
 
-        public Card(float x, float y, Bitmap bitmap, String shap,int val) {
+        public Card(float x, float y, Bitmap bitmap,int val) {
             this.bitmap = bitmap;
             this.x = x;
             this.y = y;
-            this.shap = shap;
             this.val = val;
         }
         public void drawCard(Canvas canvas)
