@@ -17,6 +17,7 @@ public class BoardGame extends View {
     DoubleButton doubleButton;
     ReturnButton returnButton;
     SplitButton splitButton;
+    StartButton startButton;
     private Deck deck;
 
     private Bitmap background;
@@ -38,6 +39,9 @@ public class BoardGame extends View {
         bitmapSplit = BitmapFactory.decodeResource(getResources(),R.drawable.splitbutton);
         bitmapSplit = Bitmap.createScaledBitmap(bitmapSplit,600,400,true);
         splitButton = new SplitButton(425,1900,bitmapSplit);
+        bitmapReturn = BitmapFactory.decodeResource(getResources(),R.drawable.returnbutton);
+        bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn,400,400,true);
+        returnButton = new ReturnButton(500,100,bitmapReturn);
         bitmapReturn = BitmapFactory.decodeResource(getResources(),R.drawable.returnbutton);
         bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn,400,400,true);
         returnButton = new ReturnButton(500,100,bitmapReturn);
