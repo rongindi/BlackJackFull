@@ -13,6 +13,7 @@ public class Card {
         private int val;
         private String shap;
 
+
         public Card(float x, float y, Bitmap bitmap,int val) {
             this.bitmap = bitmap;
             this.x = x;
