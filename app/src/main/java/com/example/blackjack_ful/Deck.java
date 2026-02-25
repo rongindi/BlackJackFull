@@ -13,7 +13,7 @@ public class Deck {
     Context context;
 
     public Deck(Context context1) {
-        cards = new ArrayList<>();
+        cards = new ArrayList<Card>();
         context = context1;
         createDeck();
     }
@@ -48,7 +48,8 @@ public class Deck {
                     .getIdentifier("s" + val, "drawable", context.getPackageName());
 
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-            cards.add(new Card(0, 0, bitmap, val));
+            if (val>10)
+                cards.add(new Card(0, 0, bitmap, 10));
         }
     }
 

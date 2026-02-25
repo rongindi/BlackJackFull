@@ -22,4 +22,9 @@ public class StandButton {
         canvasHeight = canvas.getHeight();
         canvas.drawBitmap(bitmap,x,y,null);
     }
+    public boolean contains(float x, float y)
+    {
+        return x >= this.x && x <= this.x + bitmap.getWidth() &&
+                y >= this.y && y <= this.y + bitmap.getHeight();
+    }
 }

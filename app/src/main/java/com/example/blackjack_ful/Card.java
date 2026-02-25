@@ -20,12 +20,21 @@ public class Card {
             this.y = y;
             this.val = val;
         }
+
+        public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        }
         public void drawCard(Canvas canvas)
         {
-            canvasWidth = canvas.getWidth();
-            canvasHeight = canvas.getHeight();
-            canvas.drawBitmap(bitmap,x,y,null);
+            if (bitmap != null) {
+                canvas.drawBitmap(bitmap, x, y, null);
+            }
         }
+        public int getVal(){
+            return this.val;
+        }
+
     }
 
 
