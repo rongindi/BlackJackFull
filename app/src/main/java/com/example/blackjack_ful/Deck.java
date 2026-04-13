@@ -27,21 +27,30 @@ public class Deck {
                     .getIdentifier("c" + val, "drawable", context.getPackageName());
 
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-            cards.add(new Card(0, 0, bitmap, val));
+            if (val>10)
+                cards.add(new Card(0, 0, bitmap, 10));
+            else
+                cards.add(new Card(0, 0, bitmap, val));
         }
         for (int val = 1; val <= 13; val++) {
             int resId = context.getResources()
                     .getIdentifier("d" + val, "drawable", context.getPackageName());
 
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-            cards.add(new Card(0, 0, bitmap, val));
+            if (val>10)
+                cards.add(new Card(0, 0, bitmap, 10));
+            else
+                cards.add(new Card(0, 0, bitmap, val));
         }
         for (int val = 1; val <= 13; val++) {
             int resId = context.getResources()
                     .getIdentifier("h" + val, "drawable", context.getPackageName());
 
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-            cards.add(new Card(0, 0, bitmap, val));
+            if (val>10)
+                cards.add(new Card(0, 0, bitmap, 10));
+            else
+                cards.add(new Card(0, 0, bitmap, val));
         }
         for (int val = 1; val <= 13; val++) {
             int resId = context.getResources()
@@ -50,6 +59,8 @@ public class Deck {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
             if (val>10)
                 cards.add(new Card(0, 0, bitmap, 10));
+            else
+                cards.add(new Card(0, 0, bitmap, val));
         }
     }
 

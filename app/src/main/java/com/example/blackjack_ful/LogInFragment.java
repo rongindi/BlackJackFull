@@ -70,7 +70,7 @@ public class LogInFragment extends Fragment {
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Success! Move to Welcome screen
-                        Intent intent = new Intent(getActivity(), WelcomActivity.class);
+                        Intent intent = new Intent(getActivity(), GameActivity.class);
                         startActivity(intent);
                         requireActivity().finish();
                     } else {
