@@ -1,33 +1,30 @@
 package com.example.blackjack_ful;
 
 public class MyDetailsInFb {
-    private int tokens;
+    private int chips;
 
-    public MyDetailsInFb(int tokens) {
-        this.tokens = tokens;
-
-    }
-
-    // MUST have the constructor  for the FireBase
+    // בנאי ריק - חובה ל-Firebase
     public MyDetailsInFb() {
     }
 
-    // MUST generate getters and setters for the FireBase
-
-
-    public int getPrice() {
-        return tokens;
+    // בנאי עם ערך
+    public MyDetailsInFb(int chips) {
+        this.chips = chips;
     }
 
-    public void setPrice(int price) {
-        this.tokens = tokens;
+    // Getter ו-Setter - חובה ל-Firebase
+    public int getChips() {
+        return chips;
+    }
+
+    public void setChips(int chips) {
+        this.chips = chips;
     }
 
     @Override
     public String toString() {
         return "MyDetailsInFb{" +
-
-                ", tokens=" + tokens +
+                "chips=" + chips +
                 '}';
     }
 }
