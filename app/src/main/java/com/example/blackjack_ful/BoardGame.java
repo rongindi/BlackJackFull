@@ -319,6 +319,7 @@ public class BoardGame extends View {
                 invalidate(); // רענן את המסך
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(context, "שגיאה בטעינת גטונים", Toast.LENGTH_SHORT).show();
