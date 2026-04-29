@@ -56,19 +56,19 @@ public class BoardGame extends View {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
         bitmapStand = BitmapFactory.decodeResource(context.getResources(), R.drawable.standbutton);
         bitmapStand = Bitmap.createScaledBitmap(bitmapStand, 600, 400, true);
-        standButton = new StandButton(425, 1800, bitmapStand);
+        standButton = new StandButton(475, 1800, bitmapStand);
 
         bitmapHit = BitmapFactory.decodeResource(getResources(), R.drawable.hitbutton);
         bitmapHit = Bitmap.createScaledBitmap(bitmapHit, 600, 400, true);
-        hitButton = new HitButton(25, 1800, bitmapHit);
+        hitButton = new HitButton(0, 1800, bitmapHit);
 
         bitmapDouble = BitmapFactory.decodeResource(getResources(), R.drawable.doublebutton);
         bitmapDouble = Bitmap.createScaledBitmap(bitmapDouble, 600, 400, true);
-        doubleButton = new DoubleButton(25, 1900, bitmapDouble);
+        doubleButton = new DoubleButton(0, 1900, bitmapDouble);
 
         bitmapSplit = BitmapFactory.decodeResource(getResources(), R.drawable.splitbutton);
         bitmapSplit = Bitmap.createScaledBitmap(bitmapSplit, 600, 400, true);
-        splitButton = new SplitButton(425, 1900, bitmapSplit);
+        splitButton = new SplitButton(475, 1900, bitmapSplit);
 
         bitmapReturn = BitmapFactory.decodeResource(getResources(), R.drawable.returnbutton);
         bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn, 100, 100, true);
