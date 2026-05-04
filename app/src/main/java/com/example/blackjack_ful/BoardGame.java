@@ -40,7 +40,6 @@ public class BoardGame extends View {
     private DatabaseReference userRef;
     private MyDetailsInFb myDetails;
     private int currentChips = 1000;
-    private PlayerChips playerChips;
 
     private Bitmap background;
 
@@ -140,8 +139,8 @@ public class BoardGame extends View {
         int playerVal = playerHand.getValue();
         int dealerVal = dealerHand.getValue();
 
-        String title;
-        String message;
+        String title = "";
+        String message = "";
 
         boolean playerBlackjack = (playerVal == 21 && playerHand.getCards().size() == 2);
         boolean dealerBlackjack = (dealerVal == 21 && dealerHand.getCards().size() == 2);
@@ -151,21 +150,22 @@ public class BoardGame extends View {
             message = "Blackjack! ×2.5\nקיבלת 25 גטונים";
             currentChips += 25;
         }
-        else if (dealerBlackjack || playerVal > 21 || dealerVal > playerVal) {
+        else if (dealerBlackjack || playerVal > 21 || dealerVal > playerVal && dealerVal<22) {
             // הפסד - לא מוסיפים
-            title = "...";
-            message = "...";
+            title = "הפסדת";
+            message = "הפסדת";
         }
         else if (playerVal > dealerVal) {
             title = "ניצחת! 🎉";
             message = "היד שלך גבוהה יותר";
             currentChips += 20;
         }
-        else {
+        else if(playerVal == dealerVal){
             title = "תיקו";
             message = "שתי הידיים שוות";
             currentChips += 10;
         }
+
             new AlertDialog.Builder(getContext())
                     .setTitle(title)
                     .setMessage(message + "\n\nרוצה לשחק סיבוב נוסף?")
@@ -248,14 +248,14 @@ public class BoardGame extends View {
             float x = event.getX();
             float y = event.getY();
 
-            if (!gameActive) {
+/*            if (!gameActive) {
                 // מצב התחלה – רק Start מגיב
                 if (startButton.contains(x, y)) {
                     startNewGame();
                 }
                 return true;
 
-            }
+            }*/
 
             // מצב משחק – כפתורים רגילים
             if (hitButton.contains(x, y)) {
@@ -308,13 +308,21 @@ public class BoardGame extends View {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     myDetails = snapshot.getValue(MyDetailsInFb.class);
-                    if (myDetails != null) {
+                    if (myDetails != null)
+                    {
                         currentChips = myDetails.getChips();
+
+
+                        // TODO: 04/05/2026   תחילת המשחק 
+                        
+                        
+                        //startNewGame();
                     }
                 } else {
                     // יצירת נתונים ראשוניים
-                    myDetails = new MyDetailsInFb(1000);
-                    userRef.child("details").setValue(myDetails);
+                    myDetails = new MyDetailsInFb("Ron",1000);
+                    //userRef.child("details").setValue(myDetails);
+                    FBsingelton.getInstance().setDetails(myDetails.getName(), myDetails.getChips());
                 }
                 invalidate(); // רענן את המסך
             }
@@ -328,8 +336,11 @@ public class BoardGame extends View {
     }
     private void saveChipsToFirebase() {
         if (userRef != null && myDetails != null) {
-            myDetails.setChips(currentChips);
-            userRef.child("details").setValue(myDetails);
+            FBsingelton.getInstance().setDetails(myDetails.getName(), currentChips);
+
+/*            myDetails.setChips(currentChips);
+            //userRef.child("details").setValue(myDetails);
+            userRef.setValue(myDetails);*/
         }
     }
 }

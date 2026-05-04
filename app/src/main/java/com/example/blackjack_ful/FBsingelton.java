@@ -24,12 +24,20 @@ public class FBsingelton {
 
         // read the records from the Firebase and order them by the record from highest to lowest
         // limit to only 8 items
-        Query myQuery = database.getReference("records").orderByChild("score").limitToLast(10);
+        //Query myQuery = database.getReference("details").orderByChild("chips").limitToLast(10);
+        Query myQuery = database.getReference("details");
 
         myQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange( DataSnapshot snapshot) {
                 database = FirebaseDatabase.getInstance();
+                MainActivity.records.clear();
+                for(DataSnapshot userSnapshot : snapshot.getChildren())
+                {
+                    //String str =userSnapshot.child()  .getValue(Record.class);
+                    MyDetailsInFb myDetailsInFb =userSnapshot.getValue(MyDetailsInFb.class);
+                    MainActivity.records.add(0, myDetailsInFb);
+                }
             }
 
             @Override
@@ -47,25 +55,24 @@ public class FBsingelton {
         return instance;
     }
 
-    public void setName(String name)
+/*    public void setName(String name)
     {
         // Write a message to the database
         //DatabaseReference myRef = database.getReference("records").push(); // push adds new node with unique value
 
-        DatabaseReference myRef = database.getReference("records/" + FirebaseAuth.getInstance().getUid() + "/MyName");
+        DatabaseReference myRef = database.getReference("details/" + FirebaseAuth.getInstance().getUid());
 
         myRef.setValue(name);
-    }
+    }*/
 
-    public void setDetails(int tokens)
+    public void setDetails(String name, int chips)
     {
-        // Write a message to the database
-        //DatabaseReference myRef = database.getReference("records").push(); // push adds new node with unique value
 
-        DatabaseReference myRef = database.getReference("records/" + FirebaseAuth.getInstance().getUid() + "/MyDetails");
+        DatabaseReference myRef = database.getReference("details/" + FirebaseAuth.getInstance().getUid());
 
-        com.example.blackjack_ful.MyDetailsInFb rec = new com.example.blackjack_ful.MyDetailsInFb(tokens);
-        myRef.setValue(rec);
+       // com.example.blackjack_ful.MyDetailsInFb rec = new com.example.blackjack_ful.MyDetailsInFb(tokens);
+        MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name,chips);
+        myRef.setValue(myDetailsInFb);
     }
 }
 

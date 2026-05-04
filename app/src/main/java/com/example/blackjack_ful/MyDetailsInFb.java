@@ -2,17 +2,17 @@ package com.example.blackjack_ful;
 
 public class MyDetailsInFb {
     private int chips;
+    private String name;
 
     // בנאי ריק - חובה ל-Firebase
     public MyDetailsInFb() {
     }
 
-    // בנאי עם ערך
-    public MyDetailsInFb(int chips) {
+    public MyDetailsInFb(String name, int chips) {
         this.chips = chips;
+        this.name = name;
     }
 
-    // Getter ו-Setter - חובה ל-Firebase
     public int getChips() {
         return chips;
     }
@@ -21,10 +21,19 @@ public class MyDetailsInFb {
         this.chips = chips;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "MyDetailsInFb{" +
                 "chips=" + chips +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

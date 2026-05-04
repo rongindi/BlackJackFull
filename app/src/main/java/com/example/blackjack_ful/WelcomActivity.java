@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class WelcomActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnLogout, btnSave, btnPlay;
+    private Button btnLogout, btnSave, btnPlay, btnRecords;
     private EditText etTokens;
     private TextView tvMyName;
 
@@ -54,6 +54,8 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         btnSave.setOnClickListener(this);
         btnPlay = findViewById(R.id.btnPlay);
         btnPlay.setOnClickListener(this);
+        btnRecords = findViewById(R.id.btnRecords);
+        btnRecords.setOnClickListener(this);
 
         tvMyName = findViewById(R.id.tvMyName);
 
@@ -66,11 +68,11 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if (v == btnSave) {
-            int tokens = Integer.parseInt(etTokens.getText().toString());
+        //if (v == btnSave) {
+            //int tokens = Integer.parseInt(etTokens.getText().toString());
 
-            fb.setDetails(tokens);
-        }
+            //fb.setDetails(tokens);
+        //}
         if(v == btnLogout)
         {
             FirebaseAuth.getInstance().signOut();
@@ -79,6 +81,12 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         if (v == btnPlay)
         {
             Intent intent = new Intent(WelcomActivity.this, GameActivity.class);
+            startActivity(intent);
+        }
+
+        if (v == btnRecords)
+        {
+            Intent intent = new Intent(WelcomActivity.this, RecordsActivity.class);
             startActivity(intent);
         }
 

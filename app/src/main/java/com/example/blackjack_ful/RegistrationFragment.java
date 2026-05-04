@@ -77,7 +77,8 @@ public class RegistrationFragment extends Fragment {
                     if (task.isSuccessful()) {
                         Toast.makeText(getContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
 
-                        com.example.blackjack_ful.FBsingelton.getInstance().setName(name);
+                        //com.example.blackjack_ful.FBsingelton.getInstance().setName(name);
+                        FBsingelton.getInstance().setDetails(name, 1000);
 
                         // Move to WelcomeActivity
                         Intent intent = new Intent(getActivity(), WelcomActivity.class);

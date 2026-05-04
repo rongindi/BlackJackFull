@@ -16,10 +16,14 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
     TabLayout tabLayout;
+
+    public static ArrayList<MyDetailsInFb> records;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        records = new ArrayList<>();
 
         frameLayout = findViewById(R.id.frameLayout);
         tabLayout = findViewById(R.id.tabLayout);
