@@ -21,10 +21,6 @@
             android:name=".RegistrationFragment"
             android:exported="false" />
         <activity
-            android:name=".ui.login.SignUpActivity"
-            android:exported="false"
-            android:label="@string/title_activity_sign_up" />
-        <activity
             android:name=".LogInFragment"
             android:exported="false" />
         <activity

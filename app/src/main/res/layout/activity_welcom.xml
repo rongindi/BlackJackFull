@@ -18,30 +18,13 @@
         android:text="Welcome to BlackJack"
         android:textSize="30sp"
         android:id="@+id/tvMyName"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="100dp" />
 
 
 
 
-    <!-- Price field -->
-    <EditText
-        android:id="@+id/etTokens"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="How much tokens do you want?"
-        android:inputType="number"
-        android:textSize="18sp"
-        android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save to Firebase"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#B32828"/>
+
 
     <Button
         android:id="@+id/btnLogout"
@@ -50,7 +33,7 @@
         android:text="Logout"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="30dp"
         android:backgroundTint="#B32828"/>
 
     <Button
@@ -60,7 +43,7 @@
         android:text="Play"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="30dp"
         android:backgroundTint="#B32828"/>
 
     <Button
@@ -70,7 +53,7 @@
         android:text="Rec"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="30dp"
         android:backgroundTint="#B32828"/>
 
 

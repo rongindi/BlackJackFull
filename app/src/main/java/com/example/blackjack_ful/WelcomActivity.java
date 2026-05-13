@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 public class WelcomActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnLogout, btnSave, btnPlay, btnRecords;
-    private EditText etTokens;
+    private Button btnLogout, btnPlay, btnRecords;
+
     private TextView tvMyName;
 
     private FirebaseAuth mAuth;
@@ -45,13 +45,10 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         fb = com.example.blackjack_ful.FBsingelton.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        etTokens = findViewById(R.id.etTokens);
 
 
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
-        btnSave = findViewById(R.id.btnSave);
-        btnSave.setOnClickListener(this);
         btnPlay = findViewById(R.id.btnPlay);
         btnPlay.setOnClickListener(this);
         btnRecords = findViewById(R.id.btnRecords);
