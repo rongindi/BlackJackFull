@@ -33,7 +33,6 @@ public class BoardGame extends View {
     DoubleButton doubleButton;
     ReturnButton returnButton;
     SplitButton splitButton;
-    StartButton startButton;
     private Deck deck;
     private boolean gameActive = false;
     private boolean dealerTurn = false;
@@ -47,10 +46,6 @@ public class BoardGame extends View {
         super(context);
         this.context = context;
         deck = new Deck(context);
-
-        bitmapStart = BitmapFactory.decodeResource(context.getResources(), R.drawable.startbutton);
-        bitmapStart = Bitmap.createScaledBitmap(bitmapStart, 600, 400, true);
-        startButton = new StartButton(200, 1400, bitmapStart);
 
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
         bitmapStand = BitmapFactory.decodeResource(context.getResources(), R.drawable.standbutton);
@@ -288,7 +283,6 @@ public class BoardGame extends View {
                 return true;
             }
 
-            // ... כפתורים אחרים (double, split וכו')
 
             return super.onTouchEvent(event);
         }
