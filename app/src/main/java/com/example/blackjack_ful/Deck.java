@@ -29,6 +29,8 @@ public class Deck {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
             if (val>10)
                 cards.add(new Card(0, 0, bitmap, 10));
+            else if (val == 1)
+                cards.add(new Card(0, 0, bitmap, 11));
             else
                 cards.add(new Card(0, 0, bitmap, val));
         }
@@ -39,6 +41,8 @@ public class Deck {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
             if (val>10)
                 cards.add(new Card(0, 0, bitmap, 10));
+            else if (val == 1)
+                cards.add(new Card(0, 0, bitmap, 11));
             else
                 cards.add(new Card(0, 0, bitmap, val));
         }
@@ -49,6 +53,8 @@ public class Deck {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
             if (val>10)
                 cards.add(new Card(0, 0, bitmap, 10));
+            else if (val == 1)
+                cards.add(new Card(0, 0, bitmap, 11));
             else
                 cards.add(new Card(0, 0, bitmap, val));
         }
@@ -59,6 +65,8 @@ public class Deck {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
             if (val>10)
                 cards.add(new Card(0, 0, bitmap, 10));
+            else if (val == 1)
+                cards.add(new Card(0, 0, bitmap, 11));
             else
                 cards.add(new Card(0, 0, bitmap, val));
         }

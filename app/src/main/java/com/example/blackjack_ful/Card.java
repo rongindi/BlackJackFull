@@ -35,6 +35,10 @@ public class Card {
             return this.val;
         }
 
+        public void setVal(int newVal){
+        this.val = newVal;
     }
+
+}
 
 

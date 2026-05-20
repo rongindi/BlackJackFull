@@ -18,12 +18,15 @@ import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class BoardGame extends View {
     private Hand playerHand;
+    private Hand playerHand2 = null;   // יד שנייה אחרי Split
+
+    private boolean isSplit = false;   // האם השחקן פיצל
+    private boolean playingSecondHand = false;
     private Hand dealerHand;
 
     Bitmap bitmap, bitmapStand, bitmapHit, bitmapDouble, bitmapSplit, bitmapReturn, bitmapStart;
@@ -68,46 +71,37 @@ public class BoardGame extends View {
         bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn, 100, 100, true);
         returnButton = new ReturnButton(900, 50, bitmapReturn);
 
-        // יצירת ידיים – מיקומים זמניים (יעודכנו ב-onSizeChanged)
+        // יצירת ידיים
         playerHand = new Hand(60, 0);
         dealerHand = new Hand(60, 0);
         initFirebaseChips();
         deck.createDeck();
         deck.shuffle();
 
-
-        // אפשר להתחיל משחק מיד – או להוסיף כפתור Start
         startNewGame();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
-        // עדכון מיקומים דינמי לפי גובה המסך
         if (playerHand != null) {
-            playerHand.setPosition(300, h - 1000);   // שחקן – 400 פיקסל מהתחתית
+            playerHand.setPosition(300, h - 1000);
         }
         if (dealerHand != null) {
-            dealerHand.setPosition(300, 120);       // דילר – קבוע למעלה
+            dealerHand.setPosition(300, 120);
         }
-
-        // אם רוצים להתאים את הרווח בין קלפים לגודל המסך
-        // playerHand.cardSpacing = w / 10f;   // דוגמה – 10% מרוחב המסך
-
-        invalidate();  // לצייר מחדש אחרי שינוי גודל
+        invalidate();
     }
 
     private void startNewGame() {
-
         if (currentChips < 10) {
             Toast.makeText(context, "אין לך מספיק גטונים! (צריך 10)", Toast.LENGTH_SHORT).show();
             gameActive = false;
             return;
         }
 
-        currentChips -= 10;                    // חיוב 10 גטונים
-        saveChipsToFirebase();                 // שמירה
+        currentChips -= 10;
+        saveChipsToFirebase();
 
         playerHand.clear();
         dealerHand.clear();
@@ -124,168 +118,150 @@ public class BoardGame extends View {
 
     private void endRound() {
         gameActive = false;
-        dealerTurn = true;        // חושף את כל הקלפים של הדילר
+        dealerTurn = true;
         invalidate();
-        // השהיה של 1.5 שניות כדי שהשחקן יראה את יד הדילר
         postDelayed(this::showResultDialog, 1500);
     }
 
     private void showResultDialog() {
-        int playerVal = playerHand.getValue();
-        int dealerVal = dealerHand.getValue();
-
         String title = "";
         String message = "";
 
-        boolean playerBlackjack = (playerVal == 21 && playerHand.getCards().size() == 2);
-        boolean dealerBlackjack = (dealerVal == 21 && dealerHand.getCards().size() == 2);
+        boolean playerBlackjack = (playerHand.getValue() == 21 && playerHand.getCards().size() == 2);
+        boolean dealerBlackjack = (dealerHand.getValue() == 21 && dealerHand.getCards().size() == 2);
 
         if (playerBlackjack) {
             title = "ניצחת! 🎉";
             message = "Blackjack! ×2.5\nקיבלת 25 גטונים";
             currentChips += 25;
-        }
-        else if (dealerBlackjack || playerVal > 21 || dealerVal > playerVal && dealerVal<22) {
-            // הפסד - לא מוסיפים
+        } else if (dealerBlackjack || playerHand.getValue() > 21 || (dealerHand.getValue() > playerHand.getValue() && dealerHand.getValue() < 22)) {
             title = "הפסדת";
-            message = "הפסדת";
-        }
-        else if (playerVal > dealerVal) {
+            message = "הפסדת בסיבוב הזה";
+        } else if (playerHand.getValue() > dealerHand.getValue() || dealerHand.isBust()) {
             title = "ניצחת! 🎉";
-            message = "היד שלך גבוהה יותר";
+            message = "היד שלך טובה יותר";
             currentChips += 20;
-        }
-        else if(playerVal == dealerVal){
+        } else if (playerHand.getValue() == dealerHand.getValue()) {
             title = "תיקו";
             message = "שתי הידיים שוות";
             currentChips += 10;
         }
 
-            new AlertDialog.Builder(getContext())
-                    .setTitle(title)
-                    .setMessage(message + "\n\nרוצה לשחק סיבוב נוסף?")
-                    .setPositiveButton("כן", (dialog, which) -> startNewGame())
-                    .setNegativeButton("לא", (dialog, which) -> {
-                        // חוזר למסך הבית
-                        if (getContext() instanceof Activity) {
-                            ((Activity) getContext()).finish();
-                        }
-                    })
-                    .setCancelable(false)
-                    .show();
+        saveChipsToFirebase(); // שמירה בסוף סיבוב
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setMessage(message + "\n\nרוצה לשחק סיבוב נוסף?")
+                .setPositiveButton("כן", (dialog, which) -> startNewGame())
+                .setNegativeButton("לא", (dialog, which) -> {
+                    if (getContext() instanceof Activity) {
+                        ((Activity) getContext()).finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    @Override
+    protected void onDraw(@NonNull Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        standButton.drawStand(canvas);
+        hitButton.drawHit(canvas);
+        doubleButton.drawDouble(canvas);
+        splitButton.drawSplit(canvas);
+        returnButton.drawReturn(canvas);
+
+        playerHand.drawAll(canvas);
+        if (isSplit && playerHand2 != null) {
+            playerHand2.drawAll(canvas);
         }
 
-
-        @Override
-        protected void onDraw (@NonNull Canvas canvas){
-            super.onDraw(canvas);
-
-            // רקע + כפתורים
-            canvas.drawBitmap(bitmap, 0, 0, null);
-            standButton.drawStand(canvas);
-            hitButton.drawHit(canvas);
-            doubleButton.drawDouble(canvas);
-            splitButton.drawSplit(canvas);
-            returnButton.drawReturn(canvas);   // ← צריך ליישם drawReturn ב-ReturnButton
-
-            //if (!gameActive) {
-               // startButton.drawStart(canvas);
-               // return;
-            //}
-
-            // ציור יד השחקן
-            playerHand.drawAll(canvas);
-
-            // ציור יד הדילר
-            if (dealerTurn) {
-                dealerHand.drawAll(canvas);                    // חושף את כל הקלפים
-            } else {
-                // מראה רק את הקלף הראשון של הדילר
-                ArrayList<Card> dealerCards = dealerHand.getCards();
-                if (!dealerCards.isEmpty()) {
-                    dealerCards.get(0).drawCard(canvas);       // רק הקלף הראשון
-                }
-            }
-
-            // טקסט ערכים
-            Paint p = new Paint();
-            p.setColor(Color.WHITE);
-            p.setTextSize(50);
-            p.setAntiAlias(true);
-            p.setFakeBoldText(true);
-
-            canvas.drawText("שחקן: " + playerHand.getValue(),
-                    playerHand.getStartX(), playerHand.getStartY() - 30, p);
-
-            if (dealerTurn) {
-                canvas.drawText("דילר: " + dealerHand.getValue(),
-                        dealerHand.getStartX(), dealerHand.getStartY() - 30, p);
-            } else {
-                canvas.drawText("דילר: ?", dealerHand.getStartX(), dealerHand.getStartY() - 30, p);
-            }
-            // בתוך onDraw(), אחרי ציור הרקע
-            Paint chipsPaint = new Paint();
-            chipsPaint.setColor(Color.YELLOW);
-            chipsPaint.setTextSize(55);
-            chipsPaint.setAntiAlias(true);
-            chipsPaint.setFakeBoldText(true);
-
-            canvas.drawText("גטונים: " + currentChips,
-                    getWidth() - 380, 990, chipsPaint);
+        if (dealerTurn) {
+            dealerHand.drawAll(canvas);
+        } else if (!dealerHand.getCards().isEmpty()) {
+            dealerHand.getCards().get(0).drawCard(canvas);
         }
 
-        @Override
-        public boolean onTouchEvent (MotionEvent event){
-            if (event.getAction() != MotionEvent.ACTION_DOWN) {
-                return super.onTouchEvent(event);
-            }
+        Paint p = new Paint();
+        p.setColor(Color.WHITE);
+        p.setTextSize(50);
+        p.setAntiAlias(true);
+        p.setFakeBoldText(true);
 
-            float x = event.getX();
-            float y = event.getY();
+        canvas.drawText("שחקן: " + playerHand.getValue(), playerHand.getStartX(), playerHand.getStartY() - 30, p);
+        if (dealerTurn) {
+            canvas.drawText("דילר: " + dealerHand.getValue(), dealerHand.getStartX(), dealerHand.getStartY() - 30, p);
+        } else {
+            canvas.drawText("דילר: ?", dealerHand.getStartX(), dealerHand.getStartY() - 30, p);
+        }
 
-/*            if (!gameActive) {
-                // מצב התחלה – רק Start מגיב
-                if (startButton.contains(x, y)) {
-                    startNewGame();
-                }
-                return true;
+        Paint chipsPaint = new Paint();
+        chipsPaint.setColor(Color.YELLOW);
+        chipsPaint.setTextSize(55);
+        chipsPaint.setAntiAlias(true);
+        chipsPaint.setFakeBoldText(true);
+        canvas.drawText("גטונים: " + currentChips, getWidth() - 380, 990, chipsPaint);
+    }
 
-            }*/
-
-            // מצב משחק – כפתורים רגילים
-            if (hitButton.contains(x, y)) {
-                playerHand.addCard(deck.drawCard());
-                if (playerHand.isBust()) {
-                    endRound();
-                }
-                invalidate();
-                return true;
-            }
-
-            if (standButton.contains(x, y)) {
-                dealerTurn = true;
-                // הדילר משחק
-                while (dealerHand.getValue() < 17) {
-                    dealerHand.addCard(deck.drawCard());
-                }
-                endRound();
-                return true;
-            }
-
-            if (returnButton.contains(x, y)) {
-                saveChipsToFirebase();        // שמירה לפני יציאה
-
-                Intent intent = new Intent(context, MainActivity.class);
-                context.startActivity(intent);
-                if (context instanceof Activity) {
-                    ((Activity) context).finish();
-                }
-                return true;
-            }
-
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
+
+        float x = event.getX();
+        float y = event.getY();
+
+        if (hitButton.contains(x, y)) {
+            playerHand.addCard(deck.drawCard());
+            if (playerHand.isBust()) {
+                endRound();
+            }
+            invalidate();
+            return true;
+        }
+
+        if (standButton.contains(x, y)) {
+            dealerTurn = true;
+            while (dealerHand.getValue() < 17) {
+                dealerHand.addCard(deck.drawCard());
+            }
+            endRound();
+            return true;
+        }
+
+        if (doubleButton.contains(x, y)) {
+            if (canDouble()) {
+                performDouble();
+            } else {
+                Toast.makeText(context, "Double מותר רק עם 2 קלפים ובסכום 9-11", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+
+        if (splitButton.contains(x, y)) {
+            if (canSplit()) {
+                performSplit();
+            } else {
+                Toast.makeText(context, "Split אפשרי רק עם 2 קלפים זהים", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+
+        if (returnButton.contains(x, y)) {
+            saveChipsToFirebase();
+            Intent intent = new Intent(context, MainActivity.class);
+            context.startActivity(intent);
+            if (context instanceof Activity) {
+                ((Activity) context).finish();
+            }
+            return true;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
     private void initFirebaseChips() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -294,33 +270,26 @@ public class BoardGame extends View {
         }
 
         String userId = user.getUid();
-        userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        userRef = FirebaseDatabase.getInstance().getReference("details").child(userId);
 
-        // טעינת הגטונים מה-Firebase
-        userRef.child("details").addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     myDetails = snapshot.getValue(MyDetailsInFb.class);
-                    if (myDetails != null)
-                    {
-                        currentChips = myDetails.getChips();
-
-
-                        // TODO: 04/05/2026   תחילת המשחק 
-                        
-                        
-                        //startNewGame();
-                    }
                 } else {
-                    // יצירת נתונים ראשוניים
-                    myDetails = new MyDetailsInFb("Ron",1000);
-                    //userRef.child("details").setValue(myDetails);
-                    FBsingelton.getInstance().setDetails(myDetails.getName(), myDetails.getChips());
+                    // יצירת אובייקט חדש אם לא קיים
+                    String name = user.getDisplayName();
+                    if (name == null || name.isEmpty()) name = "שחקן חדש";
+                    myDetails = new MyDetailsInFb(name, currentChips);
+                    saveChipsToFirebase();
                 }
-                invalidate(); // רענן את המסך
-            }
 
+                if (myDetails != null) {
+                    currentChips = myDetails.getChips();
+                }
+                invalidate();
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -328,15 +297,66 @@ public class BoardGame extends View {
             }
         });
     }
-    private void saveChipsToFirebase() {
-        if (userRef != null && myDetails != null) {
-            FBsingelton.getInstance().setDetails(myDetails.getName(), currentChips);
 
-/*            myDetails.setChips(currentChips);
-            //userRef.child("details").setValue(myDetails);
-            userRef.setValue(myDetails);*/
+    private void saveChipsToFirebase() {
+        if (myDetails != null) {
+            FBsingelton.getInstance().setDetails(myDetails.getName(), currentChips);
+        } else {
+            // אם myDetails עדיין null (למשל לפני שהטעינה הסתיימה), ננסה לשמור לפי פרטי המשתמש
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                String name = user.getDisplayName();
+                if (name == null || name.isEmpty()) name = "שחקן";
+                FBsingelton.getInstance().setDetails(name, currentChips);
+            }
         }
     }
+
+    private boolean canDouble() {
+        return gameActive && !dealerTurn && playerHand.getCards().size() == 2 &&
+                playerHand.getValue() >= 9 && playerHand.getValue() <= 11;
+    }
+
+    private void performDouble() {
+        if (currentChips < 10) {
+            Toast.makeText(context, "אין לך מספיק גטונים להכפלה", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        currentChips -= 10;
+        saveChipsToFirebase();
+        playerHand.addCard(deck.drawCard());
+        dealerTurn = true;
+        while (dealerHand.getValue() < 17) {
+            dealerHand.addCard(deck.drawCard());
+        }
+        endRound();
+        invalidate();
+    }
+
+    private boolean canSplit() {
+        if (!gameActive || dealerTurn || isSplit || playerHand.getCards().size() != 2) return false;
+        int val1 = playerHand.getCards().get(0).getVal();
+        int val2 = playerHand.getCards().get(1).getVal();
+        if (val1 > 10) val1 = 10;
+        if (val2 > 10) val2 = 10;
+        return val1 == val2;
+    }
+
+    private void performSplit() {
+        if (currentChips < 10) {
+            Toast.makeText(context, "אין לך מספיק גטונים לפיצול", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        currentChips -= 10;
+        saveChipsToFirebase();
+        isSplit = true;
+        playerHand2 = new Hand(400, 0);
+        Card secondCard = playerHand.getCards().remove(1);
+        playerHand2.addCard(secondCard);
+        playerHand.addCard(deck.drawCard());
+        playerHand2.addCard(deck.drawCard());
+        playerHand.setPosition(60, getHeight() - 420);
+        playerHand2.setPosition(400, getHeight() - 420);
+        invalidate();
+    }
 }
-
-

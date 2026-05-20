@@ -67,12 +67,11 @@ public class FBsingelton {
 
     public void setDetails(String name, int chips)
     {
-
-        DatabaseReference myRef = database.getReference("details/" + FirebaseAuth.getInstance().getUid());
-
-       // com.example.blackjack_ful.MyDetailsInFb rec = new com.example.blackjack_ful.MyDetailsInFb(tokens);
-        MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name,chips);
-        myRef.setValue(myDetailsInFb);
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null) {
+            DatabaseReference myRef = database.getReference("details/" + uid);
+            MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name, chips);
+            myRef.setValue(myDetailsInFb);
+        }
     }
 }
-

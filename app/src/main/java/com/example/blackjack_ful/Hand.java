@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Hand {
     private ArrayList<Card> hand = new ArrayList<>();
+    private int val;
     private float startX;
     private float startY;
     private float maxWidth = 800f;   // רוחב מקסימלי מומלץ ליד (תוכל לשנות)
@@ -73,25 +74,27 @@ public class Hand {
             value += rank;
             if (rank == 11) aces++;
         }
-        while (value > 21 && aces > 0) {
-            value -= 10;
-            aces--;
+        for (int i = aces; i >0 ; i--) {
+            if (value > 21) {
+                value -= 10;
+            }
         }
         return value;
     }
 
-    public boolean isBust() {
-        return getValue() > 21;
-    }
+        public boolean isBust () {
+            return getValue() > 21;
+        }
 
-    public ArrayList<Card> getCards() {
-        return hand;
-    }
-    public float getStartX() {
-        return startX;
-    }
+        public ArrayList<Card> getCards () {
+            return hand;
+        }
+        public float getStartX () {
+            return startX;
+        }
 
-    public float getStartY() {
-        return startY;
-    }
+        public float getStartY () {
+            return startY;
+        }
+
 }
