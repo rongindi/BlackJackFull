@@ -65,13 +65,14 @@ public class FBsingelton {
         myRef.setValue(name);
     }*/
 
-    public void setDetails(String name, int chips)
-    {
-        String uid = FirebaseAuth.getInstance().getUid();
+
+    public void setDetails(String name, int chips) {
+        String uid = FirebaseAuth.getInstance().getUid(); // מקבל את המזהה הייחודי של המשתמש
         if (uid != null) {
-            DatabaseReference myRef = database.getReference("details/" + uid);
-            MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name, chips);
-            myRef.setValue(myDetailsInFb);
+            DatabaseReference myRef = database.getReference("details/" + uid); // ניגש לנתיב המשתמש
+            MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name, chips); // יוצר אובייקט נתונים
+            myRef.setValue(myDetailsInFb); // שומר ב-Firebase
         }
     }
+
 }

@@ -22,7 +22,6 @@ public class HitButton {
     }
     public boolean contains(float x, float y)
     {
-        return x >= this.x && x <= this.x + bitmap.getWidth() &&
-                y >= this.y && y <= this.y + bitmap.getHeight();
+        return x >= this.x && x <= this.x + bitmap.getWidth() && y >= this.y && y <= this.y + bitmap.getHeight();
     }
 }

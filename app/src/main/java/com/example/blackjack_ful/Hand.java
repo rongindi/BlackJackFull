@@ -60,6 +60,11 @@ public class Hand {
         updatePositions();
     }
 
+    public void setMaxWidth(float maxWidth) {
+        this.maxWidth = maxWidth;
+        updatePositions();
+    }
+
     public void drawAll(Canvas canvas) {
         for (Card card : hand) {
             card.drawCard(canvas);
@@ -82,19 +87,19 @@ public class Hand {
         return value;
     }
 
-        public boolean isBust () {
-            return getValue() > 21;
-        }
+    public boolean isBust () {
+        return getValue() > 21;
+    }
 
-        public ArrayList<Card> getCards () {
-            return hand;
-        }
-        public float getStartX () {
-            return startX;
-        }
+    public ArrayList<Card> getCards () {
+        return hand;
+    }
+    public float getStartX () {
+        return startX;
+    }
 
-        public float getStartY () {
-            return startY;
-        }
+    public float getStartY () {
+        return startY;
+    }
 
 }
