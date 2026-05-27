@@ -1,5 +1,9 @@
 package com.example.blackjack_ful;
 
+/**
+ * מחלקת מודל נוספת לייצוג רשומה (שיא).
+ * מחלקה זו שימשה כנראה בגרסאות קודמות או כחלופה ל-MyDetailsInFb.
+ */
 public class Record {
     private String name;
     private int score;
@@ -9,11 +13,11 @@ public class Record {
         this.score = score;
     }
 
-    // MUST have the constructor  for the FireBase
+    // בנאי ריק - חובה עבור Firebase
     public Record() {
     }
 
-    // MUST generate getters and setters for the FireBase
+    // Getters ו-Setters חיוניים כדי ש-Firebase יוכל לקרוא ולכתוב את השדות
     public String getName() {
         return name;
     }

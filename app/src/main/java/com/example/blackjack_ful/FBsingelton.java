@@ -10,10 +10,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-// google explanations
-// https://firebase.google.com/docs/database/android/lists-of-data#java_1
-
-
+/**
+ * מחלקת Singleton לניהול הקשר מול Firebase Realtime Database.
+ * תבנית ה-Singleton מבטיחה שיהיה רק מופע אחד של המחלקה בכל האפליקציה,
+ * מה שמונע כפילות בחיבורים ומאפשר גישה ריכוזית לנתונים.
+ */
 public class FBsingelton {
     private static FBsingelton instance;
 
@@ -22,32 +23,35 @@ public class FBsingelton {
     private FBsingelton() {
         database = FirebaseDatabase.getInstance();
 
-        // read the records from the Firebase and order them by the record from highest to lowest
-        // limit to only 8 items
-        //Query myQuery = database.getReference("details").orderByChild("chips").limitToLast(10);
+        // הגדרת שאילתה לקריאת נתוני השחקנים מנתיב "details"
         Query myQuery = database.getReference("details");
 
+        // האזנה לשינויים בנתונים בזמן אמת (Realtime)
         myQuery.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange( DataSnapshot snapshot) {
-                database = FirebaseDatabase.getInstance();
+            public void onDataChange(DataSnapshot snapshot) {
+                // בכל פעם שיש שינוי בבסיס הנתונים, הרשימה ב-MainActivity מתעדכנת
                 MainActivity.records.clear();
                 for(DataSnapshot userSnapshot : snapshot.getChildren())
                 {
-                    //String str =userSnapshot.child()  .getValue(Record.class);
-                    MyDetailsInFb myDetailsInFb =userSnapshot.getValue(MyDetailsInFb.class);
-                    MainActivity.records.add(0, myDetailsInFb);
+                    // המרה של נתוני ה-JSON מה-Firebase לאובייקט Java מסוג MyDetailsInFb
+                    MyDetailsInFb myDetailsInFb = userSnapshot.getValue(MyDetailsInFb.class);
+                    if (myDetailsInFb != null) {
+                        MainActivity.records.add(0, myDetailsInFb);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // טיפול בשגיאות קריאה (אם יש)
             }
         });
-
-
     }
 
+    /**
+     * פונקציה סטטית המעניקה גישה למופע היחיד של המחלקה.
+     */
     public static FBsingelton getInstance() {
         if (null == instance) {
             instance = new FBsingelton();
@@ -55,24 +59,21 @@ public class FBsingelton {
         return instance;
     }
 
-/*    public void setName(String name)
-    {
-        // Write a message to the database
-        //DatabaseReference myRef = database.getReference("records").push(); // push adds new node with unique value
-
-        DatabaseReference myRef = database.getReference("details/" + FirebaseAuth.getInstance().getUid());
-
-        myRef.setValue(name);
-    }*/
-
-
+    /**
+     * שמירת או עדכון נתוני משתמש ב-Firebase.
+     * @param name שם השחקן
+     * @param chips כמות הגטונים הנוכחית
+     */
     public void setDetails(String name, int chips) {
-        String uid = FirebaseAuth.getInstance().getUid(); // מקבל את המזהה הייחודי של המשתמש
+        // קבלת ה-UID הייחודי של המשתמש שמחובר כרגע (דרך Firebase Auth)
+        String uid = FirebaseAuth.getInstance().getUid(); 
         if (uid != null) {
-            DatabaseReference myRef = database.getReference("details/" + uid); // ניגש לנתיב המשתמש
-            MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name, chips); // יוצר אובייקט נתונים
-            myRef.setValue(myDetailsInFb); // שומר ב-Firebase
+            // יצירת נתיב ייחודי לכל משתמש: details/UID
+            DatabaseReference myRef = database.getReference("details/" + uid);
+            
+            // יצירת אובייקט הנתונים ושמירתו
+            MyDetailsInFb myDetailsInFb = new MyDetailsInFb(name, chips);
+            myRef.setValue(myDetailsInFb); 
         }
     }
-
 }

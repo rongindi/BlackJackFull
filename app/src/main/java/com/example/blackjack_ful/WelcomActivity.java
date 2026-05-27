@@ -17,10 +17,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+/**
+ * מסך הבית (Welcome Screen) המוצג למשתמש לאחר התחברות מוצלחת.
+ * מאפשר ניווט למשחק, צפייה בטבלת שיאים או התנתקות מהחשבון.
+ */
 public class WelcomActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnLogout, btnPlay, btnRecords;
-
     private TextView tvMyName;
 
     private FirebaseAuth mAuth;
@@ -31,6 +34,8 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_welcom);
+        
+        // הגדרת Padding למניעת חפיפה עם שורת המצב
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -39,13 +44,12 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         initialization();
     }
 
+    /**
+     * אתחול רכיבי הממשק והקישורים ל-Firebase.
+     */
     private void initialization() {
-        // initialize
-
         fb = com.example.blackjack_ful.FBsingelton.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
-
 
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
@@ -55,43 +59,39 @@ public class WelcomActivity extends AppCompatActivity implements View.OnClickLis
         btnRecords.setOnClickListener(this);
 
         tvMyName = findViewById(R.id.tvMyName);
-
-/*        if(mAuth != null)
-        {
-            tvMyName.setText(mAuth.getCurrentUser().getEmail());
-        }*/
-
     }
 
+    /**
+     * ניהול לחיצות על הכפתורים במסך.
+     */
     @Override
     public void onClick(View v) {
-        //if (v == btnSave) {
-            //int tokens = Integer.parseInt(etTokens.getText().toString());
-
-            //fb.setDetails(tokens);
-        //}
         if(v == btnLogout)
         {
+            // התנתקות מהחשבון וחזרה למסך ההתחברות
             FirebaseAuth.getInstance().signOut();
-            finish(); // close the activity
+            finish(); 
         }
         if (v == btnPlay)
         {
+            // מעבר למסך המשחק (GameActivity)
             Intent intent = new Intent(WelcomActivity.this, GameActivity.class);
             startActivity(intent);
         }
 
         if (v == btnRecords)
         {
+            // מעבר למסך טבלת השיאים
             Intent intent = new Intent(WelcomActivity.this, RecordsActivity.class);
             startActivity(intent);
         }
-
     }
 
+    /**
+     * פונקציה לעדכון שם המשתמש בתצוגה (אם נדרש).
+     */
     public void userDataChange(String name) {
         System.out.println(name);
-        tvMyName.setText("my Name: " + name);
-
+        tvMyName.setText("שלום: " + name);
     }
 }

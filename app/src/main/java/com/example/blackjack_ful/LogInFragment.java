@@ -17,7 +17,10 @@ import android.widget.Toast;
 import com.example.blackjack_ful.WelcomActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
-
+/**
+ * פרגמנט האחראי על תהליך ההתחברות (Login) של משתמש קיים.
+ * משתמש ב-Firebase Authentication כדי לאמת את הפרטים.
+ */
 public class LogInFragment extends Fragment {
 
     private FirebaseAuth mAuth;
@@ -31,8 +34,7 @@ public class LogInFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        // Inflate the layout for this fragment
+        // טעינת ה-Layout של הפרגמנט (XML)
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
@@ -40,15 +42,15 @@ public class LogInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Initialize Firebase
+        // 1. אתחול אובייקט ה-Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // 2. Initialize Views using the 'view' parameter
+        // 2. קישור רכיבי הממשק (UI) מה-XML לקוד ה-Java
         etEmail = view.findViewById(R.id.etEmailAddress);
         etPassword = view.findViewById(R.id.etNumberPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
 
-        // 3. Set the Click Listener
+        // 3. הגדרת מאזין ללחיצה על כפתור ההתחברות
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,25 +59,30 @@ public class LogInFragment extends Fragment {
         });
     }
 
+    /**
+     * פונקציה המבצעת את תהליך ההתחברות מול השרת.
+     */
     private void performLogin() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        // בדיקה בסיסית שהשדות אינם ריקים
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getContext(), "Please enter details", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "נא להזין את כל הפרטים", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // קריאה לשירות של Firebase לביצוע התחברות עם אימייל וסיסמה
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
-                        // Success! Move to Welcome screen
-                        Intent intent = new Intent(getActivity(), GameActivity.class);
+                        // אם ההתחברות הצליחה - עוברים למסך המשחק הראשי
+                        Intent intent = new Intent(getActivity(), WelcomActivity.class);
                         startActivity(intent);
-                        requireActivity().finish();
+                        requireActivity().finish(); // סגירת מסך ההתחברות
                     } else {
-                        // Fail
-                        Toast.makeText(getContext(), "Login failed: " + task.getException().getMessage(),
+                        // אם ההתחברות נכשלה - מציגים הודעת שגיאה למשתמש
+                        Toast.makeText(getContext(), "התחברות נכשלה: " + task.getException().getMessage(),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });

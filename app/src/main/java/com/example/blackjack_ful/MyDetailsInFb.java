@@ -1,10 +1,14 @@
 package com.example.blackjack_ful;
 
+/**
+ * מחלקת מודל (POJO) המייצגת את מבנה הנתונים השמור ב-Firebase.
+ * Firebase דורש בנאי ריק ושיטות Getter/Setter כדי להמיר את ה-JSON לאובייקט Java באופן אוטומטי.
+ */
 public class MyDetailsInFb {
-    private int chips;
-    private String name;
+    private int chips; // כמות הגטונים של השחקן
+    private String name; // שם השחקן
 
-    // בנאי ריק - חובה ל-Firebase
+    // בנאי ריק - חובה עבור Firebase Realtime Database
     public MyDetailsInFb() {
     }
 

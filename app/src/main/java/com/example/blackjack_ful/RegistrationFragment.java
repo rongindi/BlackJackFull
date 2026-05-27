@@ -17,9 +17,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RegistrationFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * פרגמנט האחראי על תהליך ההרשמה (Registration) של משתמש חדש.
+ * יוצר חשבון ב-Firebase Auth ומאתחל את נתוני המשתמש ב-Realtime Database.
  */
 public class RegistrationFragment extends Fragment {
 
@@ -34,7 +33,7 @@ public class RegistrationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // טעינת ה-Layout של הפרגמנט (XML)
         return inflater.inflate(R.layout.fragment_registration, container, false);
     }
 
@@ -42,16 +41,16 @@ public class RegistrationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Initialize Firebase Auth
+        // 1. אתחול אובייקט ה-Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // 2. Link XML views to Java objects
+        // 2. קישור רכיבי הממשק (UI) מה-XML לקוד ה-Java
         etEmail = view.findViewById(R.id.etEmailAddress);
         etPassword = view.findViewById(R.id.etNumberPassword);
         etName = view.findViewById(R.id.etName);
         btnRegister = view.findViewById(R.id.btnRegister);
 
-        // 3. Set the Click Listener
+        // 3. הגדרת מאזין ללחיצה על כפתור ההרשמה
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,36 +59,40 @@ public class RegistrationFragment extends Fragment {
         });
     }
 
+    /**
+     * פונקציה המבצעת את תהליך ההרשמה.
+     */
     private void handleRegistration() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String name = etName.getText().toString().trim();
 
-        // Simple validation
+        // בדיקה שכל השדות מולאו
         if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-            Toast.makeText(getContext(), "All fields are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "נא למלא את כל השדות", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Firebase Create User
+        // יצירת משתמש חדש ב-Firebase Auth עם אימייל וסיסמה
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "הרשמה הצליחה!", Toast.LENGTH_SHORT).show();
 
-                        //com.example.blackjack_ful.FBsingelton.getInstance().setName(name);
+                        // יצירת רשומה ראשונית למשתמש בבסיס הנתונים עם 1000 גטונים
                         FBsingelton.getInstance().setDetails(name, 1000);
 
-                        // Move to WelcomeActivity
+                        // מעבר למסך ה-Welcome
                         Intent intent = new Intent(getActivity(), WelcomActivity.class);
                         startActivity(intent);
 
-                        // Close the hosting activity so user can't go back to register
+                        // סגירת ה-Activity המארחת כדי שלא יהיה ניתן לחזור למסך ההרשמה
                         if (getActivity() != null) {
                             getActivity().finish();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Registration Failed: " +
+                        // הצגת סיבת הכישלון (למשל: אימייל כבר קיים או סיסמה חלשה מדי)
+                        Toast.makeText(getContext(), "הרשמה נכשלה: " +
                                 task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
