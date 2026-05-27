@@ -60,25 +60,25 @@ public class BoardGame extends View {
         // טעינת תמונות הרקע והכפתורים מתיקיית ה-Resources
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
         
-        int btnWidth = 500;
-        int btnHeight = 250;
+        int btnWidth = 540;
+        int btnHeight = 320;
 
         // יצירת הכפתורים וקביעת גודלם ומיקומם (x,y)
         bitmapStand = BitmapFactory.decodeResource(context.getResources(), R.drawable.standbutton);
         bitmapStand = Bitmap.createScaledBitmap(bitmapStand, btnWidth, btnHeight, true);
-        standButton = new StandButton(550, 1750, bitmapStand);
+        standButton = new StandButton(540, 1680, bitmapStand);
 
         bitmapHit = BitmapFactory.decodeResource(getResources(), R.drawable.hitbutton);
         bitmapHit = Bitmap.createScaledBitmap(bitmapHit, btnWidth, btnHeight, true);
-        hitButton = new HitButton(20, 1750, bitmapHit);
+        hitButton = new HitButton(0, 1680, bitmapHit);
 
         bitmapDouble = BitmapFactory.decodeResource(getResources(), R.drawable.doublebutton);
         bitmapDouble = Bitmap.createScaledBitmap(bitmapDouble, btnWidth, btnHeight, true);
-        doubleButton = new DoubleButton(20, 2050, bitmapDouble);
+        doubleButton = new DoubleButton(0, 2020, bitmapDouble);
 
         bitmapSplit = BitmapFactory.decodeResource(getResources(), R.drawable.splitbutton);
         bitmapSplit = Bitmap.createScaledBitmap(bitmapSplit, btnWidth, btnHeight, true);
-        splitButton = new SplitButton(550, 2050, bitmapSplit);
+        splitButton = new SplitButton(540, 2020, bitmapSplit);
 
         bitmapReturn = BitmapFactory.decodeResource(getResources(), R.drawable.returnbutton);
         bitmapReturn = Bitmap.createScaledBitmap(bitmapReturn, 100, 100, true);
@@ -223,9 +223,9 @@ public class BoardGame extends View {
         if (pVal == dVal) {
             int ret;
             if (wasDoubled == true) {
-                ret = 40;
-            } else {
                 ret = 20;
+            } else {
+                ret = 10;
             }
             currentChips += ret;
             return "תיקו! קיבלת חזרה " + ret;
