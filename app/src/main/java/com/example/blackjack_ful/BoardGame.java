@@ -27,7 +27,6 @@ import java.util.ArrayList;
 
 /**
  * המחלקה המרכזית של המשחק. יורשת מ-View ומנהלת את כל הציור והלוגיקה.
- * כאן מתבצע ניהול התורות, חישוב התוצאות והאינטראקציה עם המשתמש.
  */
 public class BoardGame extends View {
     // --- משתני מצב המשחק (Game State) ---
@@ -373,16 +372,59 @@ public class BoardGame extends View {
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() != MotionEvent.ACTION_DOWN || isAnimating) return true;
         float x = event.getX(), y = event.getY();
-        if (hitButton.contains(x, y)) handleHit();
-        else if (standButton.contains(x, y)) handleStand();
-        else if (doubleButton.contains(x, y)) performDouble();
-        else if (splitButton.contains(x, y)) performSplit();
-        else if (returnButton.contains(x, y)) {
+        
+        if (hitButton.contains(x, y)) {
+            handleHit();
+        } else if (standButton.contains(x, y)) {
+            handleStand();
+        } else if (doubleButton.contains(x, y)) {
+            // בדיקה אם מותר לבצע Double
+            if (canDouble()) {
+                performDouble();
+            } else {
+                Toast.makeText(context, "Double מותר רק עם 2 קלפים ובסכום 9-11", Toast.LENGTH_SHORT).show();
+            }
+        } else if (splitButton.contains(x, y)) {
+            // בדיקה אם מותר לבצע Split (חייב 2 קלפים זהים בערכם)
+            if (canSplit()) {
+                performSplit();
+            } else {
+                Toast.makeText(context, "Split אפשרי רק עם 2 קלפים זהים בערכם", Toast.LENGTH_SHORT).show();
+            }
+        } else if (returnButton.contains(x, y)) {
             saveChipsToFirebase();
             context.startActivity(new Intent(context, MainActivity.class));
             if (context instanceof Activity) ((Activity) context).finish();
         }
         return true;
+    }
+
+    /**
+     * בודק האם ניתן לבצע פיצול (Split).
+     * מותר רק אם יש 2 קלפים והם זהים בערכם.
+     */
+    private boolean canSplit() {
+        if (!gameActive || dealerTurn || isSplit || playerHand.getCards().size() != 2) {
+            return false;
+        }
+        int v1 = playerHand.getCards().get(0).getVal();
+        int v2 = playerHand.getCards().get(1).getVal();
+        
+        // בבלאק ג'ק, כל קלפי התמונות (10, J, Q, K) נחשבים כ-10 לעניין הפיצול
+        int finalV1 = (v1 > 10) ? 10 : v1;
+        int finalV2 = (v2 > 10) ? 10 : v2;
+        
+        return finalV1 == finalV2;
+    }
+
+    /**
+     * בודק האם ניתן לבצע הכפלה (Double).
+     * מותר רק עם 2 קלפים ובדרך כלל בסכום 9-11.
+     */
+    private boolean canDouble() {
+        int val = playerHand.getValue();
+        return gameActive && !dealerTurn && !isSplit && playerHand.getCards().size() == 2 && 
+               val >= 9 && val <= 11;
     }
 
     private void handleHit() {
