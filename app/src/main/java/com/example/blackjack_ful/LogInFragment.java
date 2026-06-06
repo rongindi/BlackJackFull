@@ -14,7 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.blackjack_ful.WelcomActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -72,18 +74,21 @@ public class LogInFragment extends Fragment {
             return;
         }
 
-        // קריאה לשירות של Firebase לביצוע התחברות עם אימייל וסיסמה
+        // קריאה לשירות של Firebase לביצוע התחברות עם אימייל וסיסמה - החלפת למבדה במחלקה אנונימית
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        // אם ההתחברות הצליחה - עוברים למסך המשחק הראשי
-                        Intent intent = new Intent(getActivity(), WelcomActivity.class);
-                        startActivity(intent);
-                        requireActivity().finish(); // סגירת מסך ההתחברות
-                    } else {
-                        // אם ההתחברות נכשלה - מציגים הודעת שגיאה למשתמש
-                        Toast.makeText(getContext(), "התחברות נכשלה: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // אם ההתחברות הצליחה - עוברים למסך המשחק הראשי
+                            Intent intent = new Intent(getActivity(), WelcomActivity.class);
+                            startActivity(intent);
+                            requireActivity().finish(); // סגירת מסך ההתחברות
+                        } else {
+                            // אם ההתחברות נכשלה - מציגים הודעת שגיאה למשתמש
+                            Toast.makeText(getContext(), "התחברות נכשלה: " + task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }

@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -63,9 +66,9 @@ public class RegistrationFragment extends Fragment {
      * פונקציה המבצעת את תהליך ההרשמה.
      */
     private void handleRegistration() {
-        String email = etEmail.getText().toString().trim();
+        final String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-        String name = etName.getText().toString().trim();
+        final String name = etName.getText().toString().trim();
 
         // בדיקה שכל השדות מולאו
         if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
@@ -73,27 +76,30 @@ public class RegistrationFragment extends Fragment {
             return;
         }
 
-        // יצירת משתמש חדש ב-Firebase Auth עם אימייל וסיסמה
+        // יצירת משתמש חדש ב-Firebase Auth - שימוש במחלקה אנונימית במקום למבדה
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "הרשמה הצליחה!", Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "הרשמה הצליחה!", Toast.LENGTH_SHORT).show();
 
-                        // יצירת רשומה ראשונית למשתמש בבסיס הנתונים עם 1000 גטונים
-                        FBsingelton.getInstance().setDetails(name, 1000);
+                            // יצירת רשומה ראשונית למשתמש בבסיס הנתונים עם 1000 גטונים
+                            FBsingelton.getInstance().setDetails(name, 1000);
 
-                        // מעבר למסך ה-Welcome
-                        Intent intent = new Intent(getActivity(), WelcomActivity.class);
-                        startActivity(intent);
+                            // מעבר למסך ה-Welcome
+                            Intent intent = new Intent(getActivity(), WelcomActivity.class);
+                            startActivity(intent);
 
-                        // סגירת ה-Activity המארחת כדי שלא יהיה ניתן לחזור למסך ההרשמה
-                        if (getActivity() != null) {
-                            getActivity().finish();
+                            // סגירת ה-Activity המארחת כדי שלא יהיה ניתן לחזור למסך ההרשמה
+                            if (getActivity() != null) {
+                                getActivity().finish();
+                            }
+                        } else {
+                            // הצגת סיבת הכישלון
+                            Toast.makeText(getContext(), "הרשמה נכשלה: " +
+                                    task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
-                    } else {
-                        // הצגת סיבת הכישלון (למשל: אימייל כבר קיים או סיסמה חלשה מדי)
-                        Toast.makeText(getContext(), "הרשמה נכשלה: " +
-                                task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
