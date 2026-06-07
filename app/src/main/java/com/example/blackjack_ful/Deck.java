@@ -32,8 +32,9 @@ public class Deck {
      */
     public void createDeck() {
         String[] types = {"c", "d", "h", "s"};
-        
-        for (String type : types) {
+
+        for (int i = 0; i < types.length; i++) {
+            String type = types[i];
             for (int val = 1; val <= 13; val++) {
                 int resId = context.getResources()
                         .getIdentifier(type + val, "drawable", context.getPackageName());

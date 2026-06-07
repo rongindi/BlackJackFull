@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        
-        // החלפת למבדה במחלקה אנונימית עבור WindowInsets
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), new OnApplyWindowInsetsListener() {
             @NonNull
             @Override
@@ -71,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frameLayout, fragment)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .commit();
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}

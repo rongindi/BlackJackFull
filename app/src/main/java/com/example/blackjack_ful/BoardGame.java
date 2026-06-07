@@ -277,7 +277,8 @@ public class BoardGame extends View {
                 .setNegativeButton("לא", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (getContext() instanceof Activity) ((Activity) getContext()).finish();
+                        if (getContext() instanceof Activity)
+                            ((Activity) getContext()).finish();
                     }
                 })
                 .setCancelable(false).show();
